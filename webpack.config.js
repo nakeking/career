@@ -9,12 +9,12 @@ const portfinder = require('portfinder');
 const fs = require('fs');
 
 //////////////////////访问端口//////////////////////
-let ports = fs.readFileSync('./port.json', 'utf-8');
+var ports = fs.readFileSync('./port.json', 'utf-8');
 ports = JSON.parse(ports);
 portfinder.basePort = "8080",
 portfinder.getPort(function(err, port){
 	ports.data.port = port;
-	ports = JSON.stringify(port, null, 4);
+	ports = JSON.stringify(ports, null, 4);
 	fs.writeFileSync('./port.json', ports);
 });
 
@@ -37,14 +37,14 @@ let host = getIp();
 //////////////////////动态添加入口方法/////////////////////////////
 function getEntry(){
 	var entry = {};
-	glob.sync('./src/entry/*.js').forEach(function(name){
+	glob.sync('./src/entry/**/*.js').forEach(function(name){
 		let start = name.indexOf('src/') + 4;
 		let end = name.length - 3;
 		let arr = [];
 		let n = name.slice(start, end);
 		n = n.split('/')[1];
 		arr.push(name);
-		arr.push('babel-polyfill');
+		arr.push('@babel/polyfill');
 		entry[n] = arr;
 	})
 	return entry;
@@ -88,8 +88,8 @@ module.exports = {
 					{
 						loader: 'babel-loader',
 						options: {
-							presets: ['@babel-preset-env'],
-							plugins: ['@babel-transform-runtime']
+							presets: ['@babel/preset-env'],
+							plugins: ['@babel/transform-runtime']
 						}
 					}
 				]
@@ -146,6 +146,7 @@ module.exports = {
 		new webpack.ProvidePlugin({
 			$: "jquery",
 			jquery: "jquery",
+			jQuery: 'jquery',
 			"window.jQuery": "jquery"
 		}),
 		new TransferWebpackPlugin([
